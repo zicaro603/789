@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>旅行攝影日記</title>
+  <style>
+    /* CSS Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #6db4c4;
+      --secondary-color: #a8d5e2;
+      --accent-color: #4a9bb7;
+      --dark-teal: #2c5f6b;
+      --light-bg: #e8f4f6;
+      --white: #ffffff;
+      --gray: #666666;
+      --light-gray: #f5f5f5;
+      --pink-accent: #e91e63;
+      --border-color: #d0d7de;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      --border-radius: 8px;
+    }
+
+    body {
+      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+      line-height: 1.6;
+      color: var(--gray);
+      background-color: var(--light-bg);
+    }
+
+    /* Navigation Styles */
+    .navbar {
+      background: var(--white);
+      box-shadow: var(--shadow);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      border-bottom: 3px solid var(--primary-color);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .logo-icon {
+      color: var(--pink-accent);
+      font-size: 1.8rem;
+    }
+
+    .logo-text {
+      color: var(--pink-accent);
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      margin: 0;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--gray);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background-color: var(--primary-color);
+      color: var(--white);
+    }
+
+    .nav-tools {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .date-display {
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-top: 80px;
+      min-height: calc(100vh - 160px);
+    }
+
+    .page {
+      display: none;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .page.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      color: var(--dark-teal);
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: var(--gray);
+    }
+
+    .page-tools {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .search-input,
+    .date-picker {
+      padding: 0.75rem;
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-input:focus,
+    .date-picker:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    /* Home Page Styles */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 3rem;
+      margin-top: 2rem;
+    }
+
+    .sidebar {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      height: fit-content;
+    }
+
+    .sidebar h3 {
+      color: var(--dark-teal);
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+    }
+
+    .news-item {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    .news-item:hover {
+      background: var(--light-bg);
+      border-radius: var(--border-radius);
+      padding: 0.5rem;
+      margin: 0 -0.5rem 1rem -0.5rem;
+    }
+
+    .news-item:last-child {
+      border-bottom: none;
+    }
+
+    .news-item .date {
+      color: var(--primary-color);
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .news-item p {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .main-gallery {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    .featured-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-image {
+      height: 200px;
+      background: var(--secondary-color);
+      position: relative;
+      overflow: hidden;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .card-image::before,
+    .card-image::after {
+      content: '';
+      position: absolute;
+      background: var(--white);
+      opacity: 0.7;
+    }
+
+    .card-image::before {
+      width: 2px;
+      height: 100%;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    .card-image::after {
+      width: 100%;
+      height: 2px;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    .card-content h3 {
+      color: var(--dark-teal);
+      margin-bottom: 0.5rem;
+      font-size: 1.3rem;
+    }
+
+    .card-content p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .filter-tab {
+      padding: 0.75rem 1.5rem;
+      border: 2px solid var(--border-color);
+      background: var(--white);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+    }
+
+    .filter-tab:hover,
+    .filter-tab.active {
+      background: var(--primary-color);
+      color: var(--white);
+      border-color: var(--primary-color);
+    }
+
+    /* Photo Grid */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .photo-card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .photo-placeholder {
+      height: 220px;
+      background: var(--secondary-color);
+      position: relative;
+      overflow: hidden;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .photo-placeholder::before,
+    .photo-placeholder::after {
+      content: '';
+      position: absolute;
+      background: var(--white);
+      opacity: 0.8;
+    }
+
+    .photo-placeholder::before {
+      width: 3px;
+      height: 100%;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    .photo-placeholder::after {
+      width: 100%;
+      height: 3px;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .photo-info {
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .photo-info h4 {
+      color: var(--dark-teal);
+      font-size: 1.1rem;
+    }
+
+    .photo-date {
+      color: var(--primary-color);
+      font-size: 0.9rem;
+    }
+
+    /* Camping Page Styles */
+    .camping-header {
+      text-align: left;
+      background: var(--white);
+      padding: 3rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+
+    .camping-intro h2 {
+      font-size: 2rem;
+      color: var(--dark-teal);
+      margin-bottom: 1rem;
+    }
+
+    .camping-intro p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      max-width: 600px;
+    }
+
+    .camping-content {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 2rem;
+    }
+
+    .camping-sidebar {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      height: fit-content;
+    }
+
+    .camping-checklist h3 {
+      color: var(--dark-teal);
+      margin-bottom: 1.5rem;
+    }
+
+    .camping-checklist label {
+      display: block;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .camping-checklist input[type="checkbox"] {
+      margin-right: 0.5rem;
+      accent-color: var(--primary-color);
+    }
+
+    .camping-main {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    .camping-gallery {
+      display: grid;
+      gap: 2rem;
+    }
+
+    .camping-card.large {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+      padding: 2rem;
+      background: var(--light-bg);
+      border-radius: var(--border-radius);
+      margin-bottom: 2rem;
+    }
+
+    .camping-card.large .photo-placeholder {
+      height: 250px;
+    }
+
+    .camping-info h3 {
+      color: var(--dark-teal);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .camping-info p {
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .camping-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      padding: 0.5rem 1rem;
+      background: var(--primary-color);
+      color: var(--white);
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-action:hover {
+      background: var(--accent-color);
+    }
+
+    .camping-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .camping-card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease;
+    }
+
+    .camping-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .camping-card .photo-placeholder {
+      height: 150px;
+    }
+
+    .camping-card h4 {
+      padding: 1rem;
+      color: var(--dark-teal);
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--dark-teal);
+      color: var(--white);
+      text-align: center;
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 1rem;
+      }
+
+      .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-10px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+
+      .nav-menu.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu li {
+        padding: 0.5rem 2rem;
+      }
+
+      .nav-link {
+        display: block;
+        width: 100%;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .page {
+        padding: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .camping-content {
+        grid-template-columns: 1fr;
+      }
+
+      .camping-card.large {
+        grid-template-columns: 1fr;
+      }
+
+      .page-tools {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .search-input,
+      .date-picker {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .filter-tabs {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .photo-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .featured-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .photo-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .camping-buttons {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+   
+<body>
+  <!-- Navigation Header -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon">📸</span>
+        <span class="logo-text">旅行攝</span>
+      </div>
+      <ul class="nav-menu">
+        <li><span class="nav-link active" data-page="home">HOME</span></li>
+        <li><span class="nav-link" data-page="osaka">OSAKA</span></li>
+        <li><span class="nav-link" data-page="okinawa">OKINAWA</span></li>
+        <li><span class="nav-link" data-page="camping">CAMPING</span></li>
+      </ul>
+      <div class="nav-tools">
+        <span class="date-display">2024年12月19日</span>
+        <button class="menu-toggle">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Home Page -->
+    <section id="home" class="page active">
+      <div class="page-header">
+        <h1>旅行攝影日記</h1>
+        <p class="subtitle">記錄美好時光的每一刻</p>
+      </div>
+
+      <div class="content-grid">
+        <div class="sidebar">
+          <div class="sidebar-content">
+            <h3>最新消息</h3>
+            <div class="news-item">
+              <span class="date">2024.7.1</span>
+              <p>大阪櫻花季攝影作品更新</p>
+            </div>
+            <div class="news-item">
+              <span class="date">2024.6.25</span>
+              <p>沖繩夏日海灘照片上線</p>
+            </div>
+            <div class="news-item">
+              <span class="date">2024.6.20</span>
+              <p>露營攝影技巧分享</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="main-gallery">
+          <div class="featured-cards">
+            <div class="card featured">
+              <span class="card-content"><img src="image/1.jpg" width="363" height="234"></span>
+              <div class="card-content">
+                <h3>大阪</h3>
+                <p>18歲那年，和好友在大阪、京都、神戶的美好回憶</p>
+              </div>
+            </div>
+           <div class="card featured">
+              <span class="card-content"><img src="image/2.jpg" width="363" height="234"></span>
+              <div class="card-content">
+                <h3>沖繩</h3>
+                <p>清澈的海水與潔白的沙灘，展現沖繩獨特的自然美景。</p>
+              </div>
+            </div>
+            <div class="card featured">
+              <span class="card-content"><img src="image/3.jpg" width="363" height="234"></span>
+              <div class="card-content">
+                <h3>露營星空</h3>
+                <p>遠離城市喧囂，在大自然中仰望滿天繁星的美妙夜晚。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Osaka Page -->
+    <section id="osaka" class="page">
+      <div class="page-header">
+        <h1>OSAKA</h1>
+        <div class="page-tools">
+          <input type="text" class="search-input" placeholder="搜尋照片...">
+          <input type="date" class="date-picker" value="2024-08-01">
+        </div>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active">全部</button>
+        <button class="filter-tab">風景</button>
+        <button class="filter-tab">建築</button>
+        <button class="filter-tab">美食</button>
+        <button class="filter-tab">人文</button>
+      </div>
+
+      <div class="photo-grid">
+        <div class="photo-card">
+          <span class="photo"><img src="image/4.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>大阪城</h4>
+            <span class="photo-date">2024.8.3</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <span class="photo"><img src="image/5.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>通天閣</h4>
+            <span class="photo-date">2024.8.2</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <span class="photo"><img src="image/6.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>心齋橋</h4>
+            <span class="photo-date">2024.8.1</span>
+          </div>
+        </div>
+        <div class="photo-card">
+         <span class="photo"><img src="image/7.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>京都</h4>
+            <span class="photo-date">2024.8.4</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <span class="photo"><img src="image/8.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>神戶</h4>
+            <span class="photo-date">2024.8.5</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <span class="photo"><img src="image/9.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>淀川花火大會</h4>
+            <span class="photo-date">2024.8.3</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Okinawa Page -->
+    <section id="okinawa" class="page">
+      <div class="page-header">
+        <h1>OKINAWA</h1>
+        <div class="page-tools">
+          <input type="text" class="search-input" placeholder="搜尋照片...">
+          <input type="date" class="date-picker" value="2025-01-13">
+        </div>
+      </div>
+
+      <div class="photo-grid">
+        <div class="photo-card">
+           <span class="photo"><img src="image/10.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>美麗海水族館</h4>
+            <span class="photo-date">2025.1.18</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <span class="photo"><img src="image/11.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>古宇利大橋</h4>
+            <span class="photo-date">2025.1.18</span>
+          </div>
+        </div>
+        <div class="photo-card">
+         <span class="photo"><img src="image/12.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>波上宮</h4>
+            <span class="photo-date">2025.1.14</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <span class="photo"><img src="image/13.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>萬座毛</h4>
+            <span class="photo-date">2025.1.18</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <span class="photo"><img src="image/14.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>美國村</h4>
+            <span class="photo-date">2025.1.18</span>
+          </div>
+        </div>
+        <div class="photo-card">
+         <span class="photo"><img src="image/15.jpg" width="363" height="280"></span>
+          <div class="photo-info">
+            <h4>玉泉洞</h4>
+            <span class="photo-date">2025.1.15</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Camping Page -->
+    <section id="camping" class="page">
+      <div class="page-header camping-header">
+        <h1>CAMPING</h1>
+        <div class="camping-intro">
+          
+          <p>在大自然中尋找內心的寧靜，用鏡頭記錄最原始的美好時光。露營攝影讓我們重新連結自然，發現生活中最純粹的感動。</p>
+        </div>
+      </div>
+
+      <div class="camping-content">
+        <div class="camping-sidebar">
+          <div class="camping-checklist">
+            <h3>露營攝影清單</h3>
+            <label><input type="checkbox"> 防水相機包</label>
+            <label><input type="checkbox"> 三腳架</label>
+            <label><input type="checkbox"> 備用電池</label>
+            <label><input type="checkbox"> 記憶卡</label>
+            <label><input type="checkbox"> 清潔用品</label>
+            <label><input type="checkbox"> 頭燈/手電筒</label>
+          </div>
+        </div>
+
+        <div class="camping-main">
+          <div class="camping-gallery">
+            <div class="camping-card large">
+              <span class="photo"><img src="image/3.jpg" width="363" height="280"></span>
+              <div class="camping-info">
+                <h3>星空銀河</h3>
+                <p>遠離光害的山區是拍攝星空的最佳地點，記錄下宇宙的壯麗景象。</p>
+                <div class="camping-buttons">
+                  <button class="btn-action">查看詳情</button>
+                  <button class="btn-action">分享</button>
+                  <button class="btn-action">收藏</button>
+                  <button class="btn-action">下載</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="camping-grid">
+              <div class="camping-card">
+                <span class="photo"><img src="image/16.jpg" width="280" height="363"></span>
+                <h4>晚餐時光</h4>
+              </div>
+              <div class="camping-card">
+                <span class="photo"><img src="image/17.jpg" width="280" height="363"></span>
+                <h4>古老建築</h4>
+              </div>
+              <div class="camping-card">
+                <span class="photo"><img src="image/18.jpg" width="280" height="363"></span>
+                <h4>森林小徑</h4>
+              </div>
+              <div class="camping-card">
+                <span class="photo"><img src="image/19.jpg" width="280" height="363"></span>
+                <h4>牧場</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2024 旅行攝影日記. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // JavaScript for Travel Photography Website
+    class TravelPhotographyApp {
+      constructor() {
+        this.currentPage = 'home';
+        this.initializeApp();
+      }
+
+      initializeApp() {
+        this.setupNavigation();
+        this.setupMobileMenu();
+        this.setupSearch();
+        this.setupFilters();
+        this.setupInteractiveElements();
+        this.updateDateTime();
+      }
+
+      setupNavigation() {
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+
+        for (const link of navLinks) {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = link.dataset.page;
+
+            if (page) {
+              // Hide all pages
+              for (const p of pages) {
+                p.classList.remove('active');
+              }
+
+              // Show target page
+              const targetPage = document.getElementById(page);
+              if (targetPage) {
+                targetPage.classList.add('active');
+                this.currentPage = page;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+
+              // Update active nav link
+              for (const l of navLinks) {
+                l.classList.remove('active');
+              }
+              link.classList.add('active');
+            }
+          });
+        }
+      }
+
+      setupMobileMenu() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        if (menuToggle && navMenu) {
+          menuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+          });
+
+          // Close menu when clicking on a link
+          for (const link of navLinks) {
+            link.addEventListener('click', () => {
+              navMenu.classList.remove('active');
+            });
+          }
+        }
+      }
+
+      setupSearch() {
+        const searchInputs = document.querySelectorAll('.search-input');
+        const photoCards = document.querySelectorAll('.photo-card');
+
+        for (const searchInput of searchInputs) {
+          searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+
+            for (const card of photoCards) {
+              const title = card.querySelector('h4')?.textContent?.toLowerCase() || '';
+              const shouldShow = searchTerm === '' || title.includes(searchTerm);
+              card.style.display = shouldShow ? 'block' : 'none';
+            }
+          });
+
+          searchInput.addEventListener('focus', () => {
+            searchInput.style.boxShadow = '0 0 0 3px rgba(109, 180, 196, 0.2)';
+          });
+
+          searchInput.addEventListener('blur', () => {
+            searchInput.style.boxShadow = 'none';
+          });
+        }
+      }
+
+      setupFilters() {
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const photoCards = document.querySelectorAll('.photo-card');
+
+        for (const tab of filterTabs) {
+          tab.addEventListener('click', () => {
+            // Update active filter tab
+            for (const t of filterTabs) {
+              t.classList.remove('active');
+            }
+            tab.classList.add('active');
+
+            // Animate cards
+            let index = 0;
+            for (const card of photoCards) {
+              card.style.animation = 'none';
+              setTimeout(() => {
+                card.style.animation = 'fadeIn 0.5s ease-in';
+                card.style.animationDelay = `${index * 0.1}s`;
+              }, 100);
+              index++;
+            }
+          });
+        }
+      }
+
+      setupInteractiveElements() {
+        const photoCards = document.querySelectorAll('.photo-card');
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const actionButtons = document.querySelectorAll('.btn-action');
+
+        // Add hover effects to cards
+        for (const card of photoCards) {
+          card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-3px) scale(1.02)';
+            card.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)';
+          });
+
+          card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0) scale(1)';
+            card.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+          });
+
+          card.addEventListener('click', () => {
+            this.showToast('正在查看照片詳情...');
+          });
+        }
+
+        // Setup camping checklist interactions
+        for (const checkbox of checkboxes) {
+          checkbox.addEventListener('change', (e) => {
+            const label = e.target.closest('label');
+            if (label) {
+              if (e.target.checked) {
+                label.style.textDecoration = 'line-through';
+                label.style.opacity = '0.7';
+              } else {
+                label.style.textDecoration = 'none';
+                label.style.opacity = '1';
+              }
+            }
+          });
+        }
+
+        // Setup action buttons
+        for (const button of actionButtons) {
+          button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const action = button.textContent;
+            const messages = {
+              '查看詳情': '正在查看詳細資訊...',
+              '分享': '已複製分享連結到剪貼簿！',
+              '收藏': '已加入收藏清單！',
+              '下載': '開始下載照片...',
+            };
+            const message = messages[action] || '操作完成！';
+            this.showToast(message);
+          });
+        }
+      }
+
+      showToast(message) {
+        const toast = document.createElement('div');
+        toast.textContent = message;
+        toast.style.cssText = `
+          position: fixed;
+          bottom: 2rem;
+          right: 2rem;
+          background: #6db4c4;
+          color: white;
+          padding: 1rem 2rem;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          z-index: 3000;
+          transform: translateY(100px);
+          transition: transform 0.3s ease;
+        `;
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.transform = 'translateY(0)';
+        }, 10);
+
+        setTimeout(() => {
+          toast.style.transform = 'translateY(100px)';
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+      }
+
+      updateDateTime() {
+        const updateTime = () => {
+          const now = new Date();
+          const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          };
+          const dateString = now.toLocaleDateString('zh-TW', options);
+
+          const dateDisplay = document.querySelector('.date-display');
+          if (dateDisplay) {
+            dateDisplay.textContent = dateString;
+          }
+        };
+
+        updateTime();
+        setInterval(updateTime, 60000); // Update every minute
+      }
+    }
+
+    // Initialize the application when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      new TravelPhotographyApp();
+      console.log('旅行攝影日記網站已載入完成！');
+    });
+  </script>
+</body>
+
+</html>
+
